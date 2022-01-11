@@ -101,6 +101,21 @@ Output:
 #### Average amount of users time spent for each course individually
 
 ```python
-python3 analysis.py --get_avg_time_spent
+python3 analysis.py --get_avg_time_spent_ind
 ```
+Query:
+```sql
+with total_time_spent as (
+    select course, user, sum(julianday(completedDate) - julianday(startDate)) as time_spent
+    from api_certificate
+    group by course, user
+)
+select aco.title,apu.firstName,apu.lastName,round(avg(tts.time_spent),2) as average_time_spent_day
+from total_time_spent tts
+    left join api_course aco on tts.course = aco.id
+    left join api_user apu on tts.user = apu.id
+    group by aco.title,apu.firstName,apu.lastName
+```
+Output:
+
 
