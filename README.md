@@ -104,12 +104,3 @@ Output:
 python3 analysis.py --get_avg_time_spent
 ```
 
-
-
-
-
-
-
-
-
-
