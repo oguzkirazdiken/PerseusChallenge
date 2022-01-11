@@ -168,6 +168,67 @@ Output:
 |Internet & Smart Home				|144.28				|Harley Donnelly			 |0.31				|Charley Jacobi				 |
 
 
+#### Amount of certificates per customer
+
+```python
+python3 analysis.py --get_certificates_per_customer
+```
+
+Query:
+```sql
+select apu.firstName || " " || apu.lastName as fullName,count(distinct ace.course) as num_of_unique_certificate
+from api_certificate ace
+left join api_user apu on ace.user = apu.id
+group by apu.firstName,apu.lastName
+```
+
+Output:
+
+The query returns 50 rows. The first 5 rows are shown below
+
+|    fullName     | num_of_unique_certificate  |
+|-----------------| ---------------------------|
+| Abigail O'Hara  |                      5     |
+| Adolph Schaden  |                      4     |
+|Adrianna Kemmer  |                      5     |
+|   Ansel Heller  |                      5     |
+|  Austyn Brakus  |                      5     |
+|    Barry Lemke  |                      5     |
 
 
+
+#### Which time user starts mostly
+
+```python
+python3 analysis.py --get_user_starts_mostly
+```
+
+Query:
+```sql
+select strftime('%H',startDate) as hour,count(distinct id) as num_of_user
+from api_certificate
+group by strftime('%H',startDate)
+```
+
+Output:
+![Figure_2](https://user-images.githubusercontent.com/53194457/148920565-16c44442-adcf-4546-95d7-2d33aa80a3d3.png)
+
+
+
+#### Most frequent used courses
+
+```python
+python3 analysis.py --get_most_frequent_used_courses
+```
+
+Query:
+```sql
+select aco.title,count(distinct ace.id) as num_of_used
+from api_certificate ace
+left join api_course aco on ace.course = aco.id
+group by aco.title
+```
+
+Output:
+![Figure_3](https://user-images.githubusercontent.com/53194457/148920579-f2687e44-0007-4393-9c12-362207212096.png)
 
