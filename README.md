@@ -29,7 +29,7 @@ python3 -m venv env
 source env/bin/activate
 ```
 
-Change current working directory to the directory where requirements.txt is located and run the following cone in your shell.
+Change current working directory to the directory where requirements.txt is located and run the following code in your shell.
 
 ```python
 cd challenge
@@ -47,9 +47,31 @@ python3 manage.py runserver
 ```
 
 
+
 ### Data Analysis and Visualizations
 
-The example data consists of 50 Users, 6 Courses and 500 Certificates.
+The example data consists of 50 Users, 6 Courses and 500 Certificates. After the ingestion phase, the following analyses were provided on `anaysis.py`. You can also run these analyses on your shell with specified arguments.
+
+#### Average complete time of a course
+
+```python
+python3 analysis.py --get_average_complete_times
+```
+
+```sql
+select aco.title,round(avg(julianday(completedDate) - julianday(startDate)),2) as avg_complete_day
+from api_certificate ace
+left join api_course aco on ace.course = aco.id
+group by aco.title
+```
+Output:
+
+
+
+
+
+
+
 
 
 
