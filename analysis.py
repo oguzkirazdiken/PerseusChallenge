@@ -51,6 +51,23 @@ def get_avg_time_spent():
     print(avg_time_spent)
 
 
+# Average amount of users time spent for each course individually
+def get_avg_time_spent_ind():
+    avg_time_spent_ind = pd.read_sql('''
+        with total_time_spent as (
+            select course, user, sum(julianday(completedDate) - julianday(startDate)) as time_spent
+            from api_certificate
+            group by course, user
+        )
+        select aco.title,apu.firstName,apu.lastName,round(avg(tts.time_spent),2) as average_time_spent_day
+        from total_time_spent tts
+        left join api_course aco on tts.course = aco.id
+        left join api_user apu on tts.user = apu.id
+        group by aco.title,apu.firstName,apu.lastName
+    ''', con=db_connection)
+    print(avg_time_spent_ind)
+
+
 # Report of fastest vs. slowest users completing a course
 def get_course_completes():
     min_max_course_completes = pd.read_sql('''
@@ -138,13 +155,11 @@ def get_most_frequent_used_courses():
     return plt.show()
 
 
-
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--get_average_complete_times", action="store_true")
     parser.add_argument("--get_avg_time_spent", action="store_true")
+    parser.add_argument("--get_avg_time_spent_ind", action="store_true")
     parser.add_argument("--get_course_completes", action="store_true")
     parser.add_argument("--get_certificates_per_customer", action="store_true")
     parser.add_argument("--get_user_starts_mostly", action="store_true")
@@ -156,6 +171,9 @@ if __name__ == '__main__':
 
     if args.get_avg_time_spent:
         analysis.get_avg_time_spent()
+
+    if args.get_avg_time_spent_ind:
+        analysis.get_avg_time_spent_ind()
 
     if args.get_course_completes:
         analysis.get_course_completes()
