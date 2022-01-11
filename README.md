@@ -66,7 +66,7 @@ group by aco.title
 ```
 Output:
 
-![Test Image 1](https://github.com/oguzkirazdiken/PerseusChallenge/Figure_1.png)
+![Figure_1](https://user-images.githubusercontent.com/53194457/148920282-99ef2b4a-387f-41f5-b67c-ece6ce1fa731.png)
 
 
 
