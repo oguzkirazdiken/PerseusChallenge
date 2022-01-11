@@ -103,6 +103,7 @@ Output:
 ```python
 python3 analysis.py --get_avg_time_spent_ind
 ```
+
 Query:
 ```sql
 with total_time_spent as (
@@ -116,6 +117,57 @@ from total_time_spent tts
     left join api_user apu on tts.user = apu.id
     group by aco.title,apu.firstName,apu.lastName
 ```
+
 Output:
+
+The query result has 247 rows. The first 5 row are shown below
+
+|   title |firstName | lastName | average_time_spent_day|
+|---------|----------|----------|-----------------------|
+| Darknet |   Adolph |  Schaden |                  45.51|
+| Darknet | Adrianna |   Kemmer |                   5.83|
+| Darknet |   Austyn |   Brakus |                 139.87|
+| Darknet |    Barry |    Lemke |                  11.15|
+| Darknet | Benedict |  Wiegand |                 438.41|
+
+#### Report of fastest vs. slowest users completing a course
+
+```python
+python3 analysis.py --get_course_completes
+```
+
+Query:
+```sql
+with min_max_certificates as (
+    select course,
+           max(julianday(completedDate) - julianday(startDate)) as max_complete_day,
+           min(julianday(completedDate) - julianday(startDate)) as min_complete_day
+    from api_certificate
+    group by course
+)
+select aco.title,
+       round(mmc.max_complete_day,2) as max_complete_day,apu_max.firstName || " " || apu_max.lastName as max_completed_user_fullName,
+       round(mmc.min_complete_day,2) as min_complete_day,apu_min.firstName || " " || apu_min.lastName as min_completed_user_fullName
+from min_max_certificates mmc
+left join api_certificate ace_min on mmc.course = ace_min.course and mmc.min_complete_day = (julianday(ace_min.completedDate) - julianday(ace_min.startDate))
+left join api_certificate ace_max on mmc.course = ace_max.course and mmc.max_complete_day = (julianday(ace_max.completedDate) - julianday(ace_max.startDate))
+left join api_course aco on mmc.course = aco.id
+left join api_user apu_min on ace_min.user = apu_min.id
+left join api_user apu_max on ace_max.user = apu_max.id
+```
+
+Output:
+
+|title								|max_complete_day   |max_completed_user_fullName |min_complete_day  |min_completed_user_fullName |
+|-----------------------------------|-------------------|----------------------------|------------------|----------------------------|
+|Protect yourself against Phishing	|203.05				|Reba Rath					 |1					|Marco Beer					 |
+|GDPR								|184.74				|Shad Marvin				 |0.85				|Marjolaine Friesen			 |
+|What is cyber security?		    |245.25				|Jameson Wilderman			 |0.44				|Vincent Gorczany			 |
+|Darknet							|286.42				|Misael Rohan				 |0.45				|Norris Raynor				 |
+|How do Hackers act?				|310.83				|Harrison Heathcote			 |0.4				|Fredy Weissnat				 |
+|Internet & Smart Home				|144.28				|Harley Donnelly			 |0.31				|Charley Jacobi				 |
+
+
+
 
 
